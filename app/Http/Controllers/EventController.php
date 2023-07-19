@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event\Event;
 use App\Models\Event\EventRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -23,19 +24,32 @@ class EventController extends Controller
         ]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function new()
     {
-        $orderDetails = $request->only([
-            'client',
-            'details'
+        return view('Event/add-event-form');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|unique:events|max:255',
+            'event_start' => 'required|date',
+            'event_end' => 'required|date|after:event_start',
+            'type' => 'required',
+            'participants_count' => 'required',
         ]);
 
-        return response()->json(
-            [
-                'data' => $this->eventRepository->createOrder($orderDetails)
-            ],
-            Response::HTTP_CREATED
-        );
+        $event = new Event();
+        $event->name = $request->name;
+        $event->event_start = $request->event_start;
+        $event->event_end = $request->event_end;
+        $event->type = $request->type;
+        $event->note = $request->note;
+        $event->attachment = $request->attachment;
+        $event->participants_count = $request->participants_count;
+        $event->save();
+
+        return redirect()->route('event.index')->with('success', 'Událost byla přidána.');
     }
 
     public function show(Request $request): JsonResponse
