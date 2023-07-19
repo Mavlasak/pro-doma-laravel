@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event\Event;
 use App\Models\Event\EventRepositoryInterface;
+use App\Utils\DateUtils;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -39,7 +40,7 @@ class EventController extends Controller
             'participants_count' => 'required',
         ]);
 
-        $event = new Event();
+        $event = new Event;
         $event->name = $request->name;
         $event->event_start = $request->event_start;
         $event->event_end = $request->event_end;
@@ -52,12 +53,15 @@ class EventController extends Controller
         return redirect()->route('event.index')->with('success', 'Událost byla přidána.');
     }
 
-    public function show(Request $request): JsonResponse
+    public function show(Request $request)
     {
-        $orderId = $request->route('id');
+        $eventId = $request->route('id');
+        $event = $this->eventRepository->getEventById($eventId);
+        $interval = DateUtils::subtractStringDateTimes($event->event_start, $event->event_end);
 
-        return response()->json([
-            'data' => $this->eventRepository->getOrderById($orderId)
+        return view('Event/detail', [
+            'interval' => $interval,
+            'event' => $event,
         ]);
     }
 

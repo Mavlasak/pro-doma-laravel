@@ -20,7 +20,7 @@ Route::get('/', function () {
 
 Route::get('udalost', [EventController::class, 'index'])->name('event.index');
 Route::get('udalost/nova', [EventController::class, 'new']);
-Route::get('udalost/{id}', [EventController::class, 'show']);
+Route::get('udalost/{id}', [EventController::class, 'show'])->name('event.detail');
 Route::post('udalost', [EventController::class, 'store'])->name('event.store');
 Route::put('udalost/{id}', [EventController::class, 'update']);
 Route::delete('udalost/{id}', [EventController::class, 'delete']);

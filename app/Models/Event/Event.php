@@ -9,12 +9,12 @@ class Event extends Model
 {
     use HasFactory;
 
-    public function setTypeAttribute($value)
+    public function setTypeAttribute($value): void
     {
         $this->attributes['type'] = json_encode($value);
     }
 
-    public function getTypeAttribute($value)
+    public function getTypeAttribute($value): array
     {
         return $this->attributes['type'] = json_decode($value);
     }

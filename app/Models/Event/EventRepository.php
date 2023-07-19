@@ -9,9 +9,9 @@ class EventRepository implements EventRepositoryInterface
         return Event::all();
     }
 
-    public function getOrderById($orderId)
+    public function getEventById(int $eventId)
     {
-        return Event::findOrFail($orderId);
+        return Event::findOrFail($eventId);
     }
 
     public function deleteOrder($orderId)
