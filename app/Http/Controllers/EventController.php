@@ -2,65 +2,69 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreEventRequest;
-use App\Http\Requests\UpdateEventRequest;
-use App\Models\Event;
+use App\Models\Event\EventRepositoryInterface;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class EventController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    private EventRepositoryInterface $eventRepository;
+
+    public function __construct(EventRepositoryInterface $eventRepository)
     {
-        //
+        $this->eventRepository = $eventRepository;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index(): JsonResponse
     {
-        //
+        return response()->json([
+            'data' => $this->eventRepository->getAllOrders()
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreEventRequest $request)
+    public function store(Request $request): JsonResponse
     {
-        //
+        $orderDetails = $request->only([
+            'client',
+            'details'
+        ]);
+
+        return response()->json(
+            [
+                'data' => $this->eventRepository->createOrder($orderDetails)
+            ],
+            Response::HTTP_CREATED
+        );
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Event $event)
+    public function show(Request $request): JsonResponse
     {
-        //
+        $orderId = $request->route('id');
+
+        return response()->json([
+            'data' => $this->eventRepository->getOrderById($orderId)
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Event $event)
+    public function update(Request $request): JsonResponse
     {
-        //
+        $orderId = $request->route('id');
+        $orderDetails = $request->only([
+            'client',
+            'details'
+        ]);
+
+        return response()->json([
+            'data' => $this->eventRepository->updateOrder($orderId, $orderDetails)
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateEventRequest $request, Event $event)
+    public function destroy(Request $request): JsonResponse
     {
-        //
-    }
+        $orderId = $request->route('id');
+        $this->eventRepository->deleteOrder($orderId);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Event $event)
-    {
-        //
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

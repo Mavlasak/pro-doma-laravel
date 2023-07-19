@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EventController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('udalost', [EventController::class, 'index']);
+Route::get('udalost/{id}', [EventController::class, 'show']);
+Route::post('udalost', [EventController::class, 'store']);
+Route::put('udalost/{id}', [EventController::class, 'update']);
+Route::delete('udalost/{id}', [EventController::class, 'delete']);
