@@ -8,7 +8,6 @@ use App\Utils\BladeUtils;
 use App\Utils\DateUtils;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 
 class EventController extends Controller
@@ -91,11 +90,10 @@ class EventController extends Controller
         return redirect()->route('event.edit', ['event' => $event])->with('success', 'Událost byla editována.');
     }
 
-    public function destroy(Request $request): JsonResponse
+    public function delete(Event $event)
     {
-        $orderId = $request->route('id');
-        $this->eventRepository->deleteOrder($orderId);
+        $event->delete();
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return redirect()->route('event.index')->with('success', 'Událost byla smazána.');
     }
 }

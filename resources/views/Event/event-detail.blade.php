@@ -24,6 +24,12 @@
         </tr>
         </tbody>
     </table>
+
+    <form name="add-blog-post-form" id="add-blog-post-form" method="post" action="{{route('event.delete', $event)}}">¨
+        @method('DELETE')
+        @csrf
+        <button type="submit" class="btn btn-primary">Smazat</button>
+    </form>
 </div>
 </body>
 </html>

@@ -26,7 +26,7 @@
             Laravel 8 - Add Blog Post Form Example
         </div>
         <div class="card-body">
-            <form name="add-blog-post-form" id="add-blog-post-form" method="POST" action="{{route('event.update', $event->id)}}">
+            <form name="add-blog-post-form" id="add-blog-post-form" method="POST" action="{{route('event.update', $event)}}">
                 @method('PUT')
                 @csrf
                 <div class="form-group">

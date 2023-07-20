@@ -24,4 +24,4 @@ Route::get('udalost/{event}', [EventController::class, 'show'])->name('event.det
 Route::get('udalost/{event}/editovat', [EventController::class, 'edit'])->name('event.edit');
 Route::post('udalost', [EventController::class, 'store'])->name('event.store');
 Route::put('udalost/{event}', [EventController::class, 'update'])->name('event.update');
-Route::delete('udalost/{event}', [EventController::class, 'delete']);
+Route::delete('udalost/{event}', [EventController::class, 'delete'])->name('event.delete');
