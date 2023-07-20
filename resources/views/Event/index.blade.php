@@ -1,26 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Laravel 8 Form Example Tutorial</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body>
-<div class="container mt-4">
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-    @if(session('status'))
-        <div class="alert alert-success">
-            {{ session('status') }}
-        </div>
-    @endif
+@extends('layouts/@layout')
+
+@section('content')
     <div class="container-fluid">
         <form name="add-blog-post-form" class="form-inline" id="add-blog-post-form" method="GET" action="{{route('event.index')}}">
             @csrf
@@ -39,6 +19,9 @@
             </select>
             <button type="submit" class="btn btn-primary m-2">Vyhledat</button>
         </form>
+        <a href="{{route('event.new')}}">
+            <button class="btn btn-primary">Přidat událost</button>
+        </a>
     </div>
     <table class="table">
         <thead>
@@ -81,6 +64,4 @@
         @endforeach
         </tbody>
     </table>
-</div>
-</body>
-</html>
+@endsection

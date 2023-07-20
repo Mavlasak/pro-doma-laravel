@@ -13,6 +13,14 @@ class EventController extends Controller
 {
     private EventRepositoryInterface $eventRepository;
 
+    private const EVENT_VALIDATE_RULES = [
+        'event_start' => 'required|date',
+        'event_end' => 'required|date|after:event_start',
+        'type' => 'required',
+        'participants_count' => 'required',
+        'name' => 'required|unique:events|max:255',
+    ];
+
     public function __construct(EventRepositoryInterface $eventRepository)
     {
         $this->eventRepository = $eventRepository;
@@ -20,11 +28,11 @@ class EventController extends Controller
 
     public function index(Request $request)
     {
-        $type = $request->get('type') === null ? null : $request->get('type')[0];
+        $type = $request->get('type');
         $name = $request->get('name');
         $eventStart = $request->get('event_start');
         $eventEnd = $request->get('event_end');
-        $events = $this->eventRepository->getAllByNameDateAndType($name, $eventStart, $eventEnd, $type);
+        $events = $this->eventRepository->getAllByNameDateAndType($name, $eventStart, $eventEnd, $type[0] ?? null);
         $filter = [
             'name' => $name,
             'event_start' => $eventStart,
@@ -34,7 +42,7 @@ class EventController extends Controller
         return view('Event/index', [
             'events' => $events,
             'filter' => $filter,
-            'eventTypes' => BladeUtils::setSelectedForSelect(Event::EVENT_TYPES, [$type]),
+            'eventTypes' => BladeUtils::setSelectedForSelect(Event::EVENT_TYPES, $type),
         ]);
     }
 
@@ -47,13 +55,7 @@ class EventController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:events|max:255',
-            'event_start' => 'required|date',
-            'event_end' => 'required|date|after:event_start',
-            'type' => 'required',
-            'participants_count' => 'required',
-        ]);
+        $validator = Validator::make($request->all(), self::EVENT_VALIDATE_RULES);
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -71,7 +73,7 @@ class EventController extends Controller
     {
         $interval = DateUtils::subtractStringDateTimes($event->event_start, $event->event_end);
 
-        return view('Event/event-detail', [
+        return view('Event/detail', [
             'interval' => $interval,
             'event' => $event,
         ]);
@@ -87,16 +89,12 @@ class EventController extends Controller
 
     public function update(Request $request, Event $event)
     {
-        $validateRules = [
-            'event_start' => 'required|date',
-            'event_end' => 'required|date|after:event_start',
-            'type' => 'required',
-            'participants_count' => 'required'];
+        $rules = self::EVENT_VALIDATE_RULES;
 
-        if ($event->name === $request->route('name')) {
-            $validateRules['name'] = 'required|unique:events|max:255';
+        if ($event->name === $request->get('name')) {
+            unset($rules['name']);
         }
-        $request->validate($validateRules);
+        $request->validate($rules);
         $event->fill($request->post())->save();
 
         return redirect()->route('event.edit', ['event' => $event])->with('success', 'Událost byla editována.');

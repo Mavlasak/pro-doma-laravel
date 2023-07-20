@@ -1,30 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Laravel 8 Form Example Tutorial</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body>
-<div class="container mt-4">
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-    @if(session('status'))
-        <div class="alert alert-success">
-            {{ session('status') }}
-        </div>
-    @endif
+@extends('layouts/@layout')
+
+@section('content')
     <div class="card">
-        <div class="card-header text-center font-weight-bold">
-            Laravel 8 - Add Blog Post Form Example
-        </div>
         <div class="card-body">
             <form name="add-blog-post-form" id="add-blog-post-form" method="POST" action="{{route('event.update', $event)}}">
                 @method('PUT')
@@ -58,12 +35,15 @@
                     <input type="text" id="attachment" name="attachment" class="form-control">
                 </div>
                 <div class="form-group">
-                    <input type="number" id="participants_count" name="participants_count" min="1" max="50" value="{{$event->participants_count}}">
+                    <label for="participants_count">Počet účastníků</label>
+                    <input type="number" id="participants_count" name="participants_count" min="1" value="{{$event->participants_count}}">
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">Editovat</button>
             </form>
+            <br/>
+            <a href="{{route('event.index')}}">
+                <button type="submit" class="btn btn-primary">Zpět</button>
+            </a>
         </div>
     </div>
-</div>
-</body>
-</html>
+@endsection
