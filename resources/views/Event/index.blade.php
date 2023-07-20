@@ -21,59 +21,66 @@
             {{ session('status') }}
         </div>
     @endif
-    <div class="card">
-        <div class="card-header text-center font-weight-bold">
-            Laravel 8 - Add Blog Post Form Example
-        </div>
-        <div class="card-body">
-            <form name="add-blog-post-form" id="add-blog-post-form" method="GET" action="{{route('event.index')}}">
-                @csrf
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Název akce</label>
-                    <input type="text" id="name" name="name" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Začátek akce</label>
-                    <input type="datetime-local" id="event_start" name="event_start" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Konec akce</label>
-                    <input type="datetime-local" id="event_end" name="event_end" class="form-control">
-                </div>
-                <div class="">
-                    <label><strong>Typ akce :</strong></label><br/>
-                    <select class="form-control" name="type[]">
-                        <option></option>
-                        @foreach ($eventTypes as $key => $type)
-                            <option value="{{$key}}" {{ ($type['selected'] ? 'selected':'') }}>{{ $type['value'] }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-        </div>
+    <div class="container-fluid">
+        <form name="add-blog-post-form" class="form-inline" id="add-blog-post-form" method="GET" action="{{route('event.index')}}">
+            @csrf
+            <label for="name" class="m-2">Název akce</label>
+            <input type="text" id="name" name="name" class="form-control" value="{{$filter['name']}}">
+            <label for="event_start" class="m-2">Začátek</label>
+            <input type="datetime-local" id="event_start" name="event_start" class="form-control" value="{{$filter['event_start']}}">
+            <label for="event_end" class="m-2">Začátek</label>
+            <input type="datetime-local" id="event_end" name="event_end" class="form-control" value="{{$filter['event_end']}}">
+            <label>Typ akce</label><br/>
+            <select class="form-control" name="type[]">
+                <option></option>
+                @foreach ($eventTypes as $key => $type)
+                    <option value="{{$key}}" {{ ($type['selected'] ? 'selected':'') }}>{{ $type['value'] }}</option>
+                @endforeach
+            </select>
+            <button type="submit" class="btn btn-primary m-2">Vyhledat</button>
+        </form>
     </div>
-
-        <table>
-            <thead>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Název akce</th>
+            <th>Začátek akce</th>
+            <th>Konec akce</th>
+            <th>Typ akce</th>
+            <th>Počet účastníků</th>
+            <th>Akce</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach ($events as $event)
             <tr>
-                <th>Název akce</th>
-                <th>Začátek akce</th>
-                <th>Konec akce</th>
-                <th>Počet účastníků</th>
+                <td>
+                    <a href="{{route('event.detail', $event)}}">
+                        {{ $event->name }}
+                    </a>
+                </td>
+                <td>{{ $event->event_start }}</td>
+                <td>{{ $event->event_end }}</td>
+                <td>
+                    @foreach ($event->type as $type)
+                        {{ $type }}
+                    @endforeach
+                </td>
+                <td>{{ $event->participants_count }}</td>
+                <td>
+                    <form name="add-blog-post-form" id="add-blog-post-form" method="post" action="{{route('event.delete', $event)}}">
+                        @method('DELETE')
+                        @csrf
+                        <button type="submit" class="btn btn-danger">Smazat</button>
+                    </form>
+                    <a href="{{route('event.edit', $event)}}">
+                        <button type="submit" class="btn btn-primary">Editovat</button>
+                    </a>
+                </td>
             </tr>
-            </thead>
-            <tbody>
-            @foreach ($events as $event)
-                <tr>
-                    <td>{{ $event->name }} </td>
-                    <td>{{ $event->event_start }} </td>
-                    <td>{{ $event->event_end }} </td>
-                    <td>{{ $event->participants_count }} </td>
-                </tr>
-            @endforeach
-            </tbody>
-        </table>
+        @endforeach
+        </tbody>
+    </table>
 </div>
 </body>
 </html>

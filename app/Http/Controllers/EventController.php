@@ -21,10 +21,19 @@ class EventController extends Controller
     public function index(Request $request)
     {
         $type = $request->get('type') === null ? null : $request->get('type')[0];
-        $events = $this->eventRepository->getAllByNameDateAndType($request->get('name'), $request->get('event_start'),$request->get('event_end'), $type);
+        $name = $request->get('name');
+        $eventStart = $request->get('event_start');
+        $eventEnd = $request->get('event_end');
+        $events = $this->eventRepository->getAllByNameDateAndType($name, $eventStart, $eventEnd, $type);
+        $filter = [
+            'name' => $name,
+            'event_start' => $eventStart,
+            'event_end' => $eventEnd,
+        ];
 
         return view('Event/index', [
             'events' => $events,
+            'filter' => $filter,
             'eventTypes' => BladeUtils::setSelectedForSelect(Event::EVENT_TYPES, [$type]),
         ]);
     }
