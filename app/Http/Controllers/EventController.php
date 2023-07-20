@@ -6,7 +6,6 @@ use App\Models\Event\Event;
 use App\Models\Event\EventRepositoryInterface;
 use App\Utils\BladeUtils;
 use App\Utils\DateUtils;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -19,10 +18,14 @@ class EventController extends Controller
         $this->eventRepository = $eventRepository;
     }
 
-    public function index(): JsonResponse
+    public function index(Request $request)
     {
-        return response()->json([
-            'data' => $this->eventRepository->getAllOrders()
+        $type = $request->get('type') === null ? null : $request->get('type')[0];
+        $events = $this->eventRepository->getAllByNameDateAndType($request->get('name'), $request->get('event_start'),$request->get('event_end'), $type);
+
+        return view('Event/index', [
+            'events' => $events,
+            'eventTypes' => BladeUtils::setSelectedForSelect(Event::EVENT_TYPES, [$type]),
         ]);
     }
 
