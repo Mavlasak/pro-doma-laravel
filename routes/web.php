@@ -19,9 +19,9 @@ Route::get('/', function () {
 });
 
 Route::get('udalost', [EventController::class, 'index'])->name('event.index');
-Route::get('udalost/nova', [EventController::class, 'new']);
-Route::get('udalost/{id}', [EventController::class, 'show'])->name('event.detail');
-Route::get('udalost/{id}/editovat', [EventController::class, 'edit'])->name('event.edit');
+Route::get('udalost/nova', [EventController::class, 'new'])->name('event.new');
+Route::get('udalost/{event}', [EventController::class, 'show'])->name('event.detail');
+Route::get('udalost/{event}/editovat', [EventController::class, 'edit'])->name('event.edit');
 Route::post('udalost', [EventController::class, 'store'])->name('event.store');
-Route::put('udalost/{id}', [EventController::class, 'update'])->name('event.update');
-Route::delete('udalost/{id}', [EventController::class, 'delete']);
+Route::put('udalost/{event}', [EventController::class, 'update'])->name('event.update');
+Route::delete('udalost/{event}', [EventController::class, 'delete']);

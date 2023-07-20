@@ -51,7 +51,7 @@
                 </div>
                 <div class="form-group">
                     <label for="exampleInputEmail1">Poznámka</label>
-                    <textarea name="note" class="form-control" value="{{$event->note}}"></textarea>
+                    <textarea name="note" class="form-control">{{$event->note}}</textarea>
                 </div>
                 <div class="form-group">
                     <label for="exampleInputEmail1">Příloha</label>

@@ -9,6 +9,7 @@ use App\Utils\DateUtils;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
 
 class EventController extends Controller
 {
@@ -26,14 +27,16 @@ class EventController extends Controller
         ]);
     }
 
-    public function new()
+    public function new(Request $request)
     {
-        return view('Event/add-event-form');
+        return view('Event/add-event-form', [
+            'eventTypes' => BladeUtils::setSelectedForSelect(Event::EVENT_TYPES, $request->old('type')),
+        ]);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|unique:events|max:255',
             'event_start' => 'required|date',
             'event_end' => 'required|date|after:event_start',
@@ -41,23 +44,20 @@ class EventController extends Controller
             'participants_count' => 'required',
         ]);
 
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $event = new Event;
-        $event->name = $request->name;
-        $event->event_start = $request->event_start;
-        $event->event_end = $request->event_end;
-        $event->type = $request->type;
-        $event->note = $request->note;
-        $event->attachment = $request->attachment;
-        $event->participants_count = $request->participants_count;
-        $event->save();
+        $event->fill($request->post())->save();
 
         return redirect()->route('event.index')->with('success', 'Událost byla přidána.');
     }
 
-    public function show(Request $request)
+    public function show(Event $event)
     {
-        $eventId = $request->route('id');
-        $event = $this->eventRepository->getEventById($eventId);
         $interval = DateUtils::subtractStringDateTimes($event->event_start, $event->event_end);
 
         return view('Event/event-detail', [
@@ -66,21 +66,16 @@ class EventController extends Controller
         ]);
     }
 
-    public function edit(Request $request)
+    public function edit(Event $event)
     {
-        $eventId = $request->route('id');
-        $event = $this->eventRepository->getEventById($eventId);
-
         return view('Event/update-event-form', [
             'event' => $event,
             'eventTypes' => BladeUtils::setSelectedForSelect(Event::EVENT_TYPES, $event->type),
         ]);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, Event $event)
     {
-        $eventId = $request->route('id');
-        $event = $this->eventRepository->getEventById($eventId);
         $validateRules = [
             'event_start' => 'required|date',
             'event_end' => 'required|date|after:event_start',
@@ -93,7 +88,7 @@ class EventController extends Controller
         $request->validate($validateRules);
         $event->fill($request->post())->save();
 
-        return redirect()->route('event.edit', ['id' => $eventId])->with('success', 'Událost byla editována.');
+        return redirect()->route('event.edit', ['event' => $event])->with('success', 'Událost byla editována.');
     }
 
     public function destroy(Request $request): JsonResponse
