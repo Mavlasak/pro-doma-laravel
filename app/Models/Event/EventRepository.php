@@ -24,11 +24,6 @@ class EventRepository implements EventRepositoryInterface
         return Event::create($orderDetails);
     }
 
-    public function updateOrder($orderId, array $newDetails)
-    {
-        return Event::whereId($orderId)->update($newDetails);
-    }
-
     public function getFulfilledOrders()
     {
         return Event::where('is_fulfilled', true);

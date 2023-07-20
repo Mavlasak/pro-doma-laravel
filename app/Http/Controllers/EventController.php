@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event\Event;
 use App\Models\Event\EventRepositoryInterface;
+use App\Utils\BladeUtils;
 use App\Utils\DateUtils;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -59,23 +60,40 @@ class EventController extends Controller
         $event = $this->eventRepository->getEventById($eventId);
         $interval = DateUtils::subtractStringDateTimes($event->event_start, $event->event_end);
 
-        return view('Event/detail', [
+        return view('Event/event-detail', [
             'interval' => $interval,
             'event' => $event,
         ]);
     }
 
-    public function update(Request $request): JsonResponse
+    public function edit(Request $request)
     {
-        $orderId = $request->route('id');
-        $orderDetails = $request->only([
-            'client',
-            'details'
-        ]);
+        $eventId = $request->route('id');
+        $event = $this->eventRepository->getEventById($eventId);
 
-        return response()->json([
-            'data' => $this->eventRepository->updateOrder($orderId, $orderDetails)
+        return view('Event/update-event-form', [
+            'event' => $event,
+            'eventTypes' => BladeUtils::setSelectedForSelect(Event::EVENT_TYPES, $event->type),
         ]);
+    }
+
+    public function update(Request $request)
+    {
+        $eventId = $request->route('id');
+        $event = $this->eventRepository->getEventById($eventId);
+        $validateRules = [
+            'event_start' => 'required|date',
+            'event_end' => 'required|date|after:event_start',
+            'type' => 'required',
+            'participants_count' => 'required'];
+
+        if ($event->name === $request->route('name')) {
+            $validateRules['name'] = 'required|unique:events|max:255';
+        }
+        $request->validate($validateRules);
+        $event->fill($request->post())->save();
+
+        return redirect()->route('event.edit', ['id' => $eventId])->with('success', 'Událost byla editována.');
     }
 
     public function destroy(Request $request): JsonResponse

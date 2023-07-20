@@ -7,6 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Event extends Model
 {
+    protected $fillable = ['name', 'event_start', 'event_end', 'type', 'note', 'attachment', 'participants_count'];
+
+    public const EVENT_TYPES = [
+        'php' => 'PHP',
+        'angular' => 'Angular',
+        'javascript' => 'Javascript',
+        'vue' => 'Vue',
+        'react' => 'React',
+        'jquery' => 'JQuery',
+    ];
+
     use HasFactory;
 
     public function setTypeAttribute($value): void
