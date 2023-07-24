@@ -18,7 +18,6 @@ return new class extends Migration
             $table->dateTime('event_end');
             $table->text('type');
             $table->text('note')->nullable();
-            $table->string('attachment')->nullable();
             $table->integer('participants_count');
             $table->dateTime('created_at');
             $table->dateTime('updated_at');

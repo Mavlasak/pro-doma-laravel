@@ -10,6 +10,12 @@
             {{ $type }}
         @endforeach
     </p>
+    @foreach ($event->files as $file)
+        <a href="{{route('file.download', $file->id)}}">
+            {{ $file->name }}<br />
+        </a>
+    @endforeach
+    <br />
     <b>Trvání akce:</b>
     <table class="table">
         <thead>

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\FileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,10 +19,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('udalost', [EventController::class, 'index'])->name('event.index');
-Route::get('udalost/nova', [EventController::class, 'new'])->name('event.new');
-Route::get('udalost/{event}', [EventController::class, 'show'])->name('event.detail');
-Route::get('udalost/{event}/editovat', [EventController::class, 'edit'])->name('event.edit');
-Route::post('udalost', [EventController::class, 'store'])->name('event.store');
-Route::put('udalost/{event}', [EventController::class, 'update'])->name('event.update');
-Route::delete('udalost/{event}', [EventController::class, 'delete'])->name('event.delete');
+Route::controller(EventController::class)->group(function() {
+    Route::get('udalost','index')->name('event.index');
+    Route::get('udalost/nova', 'new')->name('event.new');
+    Route::get('udalost/{event}','show')->name('event.detail');
+    Route::get('udalost/{event}/editovat','edit')->name('event.edit');
+    Route::post('udalost', 'store')->name('event.store');
+    Route::put('udalost/{event}','update')->name('event.update');
+    Route::delete('udalost/{event}','delete')->name('event.delete');
+});
+
+Route::controller(FileController::class)->group(function() {
+    Route::get('soubor/{file}/download','download')->name('file.download');
+});

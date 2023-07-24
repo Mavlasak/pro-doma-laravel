@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\File\FileAlreadyExistsException;
 use App\Models\Event\Event;
 use App\Models\Event\EventRepositoryInterface;
 use App\Utils\BladeUtils;
@@ -53,7 +54,7 @@ class EventController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, Event $event)
     {
         $validator = Validator::make($request->all(), self::EVENT_VALIDATE_RULES);
 
@@ -63,8 +64,11 @@ class EventController extends Controller
                 ->withInput();
         }
 
-        $event = new Event;
-        $event->fill($request->post())->save();
+        try {
+            $event->create($request->post(), $request->file('files'));
+        } catch (FileAlreadyExistsException $exception) {
+            return redirect()->route('event.new', [$event->id])->with('danger', 'Chyba při nahrávání souboru.');
+        }
 
         return redirect()->route('event.index')->with('success', 'Událost byla přidána.');
     }
