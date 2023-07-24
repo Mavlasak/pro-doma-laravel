@@ -5,9 +5,10 @@
     <p><b>Začátek akce:</b> {{ $event->event_start }}</p>
     <p><b>Konec akce:</b> {{ $event->event_end }}</p>
     <p><b>Počet účastníků:</b> {{ $event->participants_count }}</p>
+    <p><b>Typ:</b> {{ \App\Models\Event::EVENT_TYPES[$event->type] }}</p>
     <p><b>Typ akce:</b>
-        @foreach ($event->type as $type)
-            {{ $type }}
+        @foreach ($event->action_type as $actionType)
+            {{ $actionType }}
         @endforeach
     </p>
     @foreach ($event->files as $file)

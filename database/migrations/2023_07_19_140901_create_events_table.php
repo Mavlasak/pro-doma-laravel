@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->dateTime('event_start');
             $table->dateTime('event_end');
-            $table->text('type');
+            $table->string('action_type');
+            $table->string('type');
             $table->text('note')->nullable();
             $table->integer('participants_count');
             $table->dateTime('created_at');

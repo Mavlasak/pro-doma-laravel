@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Event;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,10 +21,10 @@ class EventFactory extends Factory
             'name' => $this->faker->name(),
             'event_start' => $this->faker->dateTimeInInterval('+1 week', '+3 week'),
             'event_end' => $this->faker->dateTimeInInterval('+4 week', '+10 week'),
-            'type' => $this->faker->sentences(4, true),
+            'type' => $this->faker->randomElement(array_keys(Event::EVENT_TYPES)),
+            'action_type' => $this->faker->randomElements(array_keys(Event::EVENT_ACTION_TYPES), 2),
             'note' => $this->faker->sentences(4, true),
-            'attachment' => $this->faker->name(),
-            'participants_count' => $this->faker->randomDigit(),
+            'participants_count' => $this->faker->randomDigitNotNull(),
         ];
     }
 }

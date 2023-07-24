@@ -3,7 +3,7 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            <form name="add-blog-post-form" id="add-blog-post-form" method="POST" action="{{route('event.update', $event)}}" enctype="multipart/form-data">
+            <form name="add-blog-post-form" id="add-blog-post-form" method="POST" action="{{route('admin.event.update', $event)}}" enctype="multipart/form-data">
                 @method('PUT')
                 @csrf
                 <div class="form-group">
@@ -19,9 +19,17 @@
                     <input type="datetime-local" id="event_end" name="event_end" class="form-control" required="" value="{{date('Y-m-d\TH:i', strtotime($event->event_end))}}">
                 </div>
                 <div class="form-group">
-                    <label><strong>Typ akce:</strong></label><br>
-                    @foreach ($eventTypes as $key => $type)
-                        <label><input type="checkbox" name="type[]" value="{{$key}}" {{ ($type['selected'] ? 'checked':'') }}>{{ $type['value'] }}</label>
+                    <label><strong>Typ:</strong></label><br/>
+                    <select class="form-control" name="type">
+                        @foreach (\App\Models\Event::EVENT_TYPES as $key => $actionType)
+                            <option value="{{$key}}" {{ ($event->type === $key ? 'selected':'') }}>{{ $actionType }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><strong>O jaký typ akce se jedná:</strong></label><br>
+                    @foreach ($eventActionTypes as $key => $type)
+                        <label><input type="checkbox" name="action_type[]" value="{{$key}}" {{ ($type['checked'] ? 'checked':'') }}>{{ $type['value'] }}</label>
                     @endforeach
                 </div>
                 <div class="form-group">
@@ -51,14 +59,14 @@
                 <a href="{{route('file.download', $file)}}">
                     {{ $file->name }}
                 </a>
-                <form name="" id="" method="post" action="{{route('file.delete', $file)}}">
+                <form name="" id="" method="post" action="{{route('admin.file.delete', $file)}}">
                     @method('DELETE')
                     @csrf
                     <button type="submit" class="btn btn-danger">Smazat</button>
                 </form>
             @endforeach
             <br/>
-            <a href="{{route('event.index')}}">
+            <a href="{{route('admin.event.index')}}">
                 <button type="submit" class="btn btn-primary">Zpět</button>
             </a>
         </div>
