@@ -3,7 +3,7 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            <form name="add-blog-post-form" id="add-blog-post-form" method="POST" action="{{route('event.update', $event)}}">
+            <form name="add-blog-post-form" id="add-blog-post-form" method="POST" action="{{route('event.update', $event)}}" enctype="multipart/form-data">
                 @method('PUT')
                 @csrf
                 <div class="form-group">
@@ -28,9 +28,23 @@
                     <label for="exampleInputEmail1">Poznámka</label>
                     <textarea name="note" class="form-control">{{$event->note}}</textarea>
                 </div>
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Příloha</label>
-                    <input type="text" id="attachment" name="attachment" class="form-control">
+                <div class="mb-3">
+                    @foreach ($event->files as $file)
+                        <a href="{{route('file.download', $file->id)}}">
+                            {{ $file->name }}<br />
+                        </a>
+                    @endforeach
+                    <label class="form-label" for="inputFile">Vyberte soubory:</label>
+                    <input
+                        type="file"
+                        name="files[]"
+                        id="inputFile"
+                        multiple
+                        class="form-control @error('files') is-invalid @enderror">
+
+                    @error('files')
+                    <span class="text-danger">{{ $message }}</span>
+                    @enderror
                 </div>
                 <div class="form-group">
                     <label for="participants_count">Počet účastníků</label>

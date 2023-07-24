@@ -2,7 +2,6 @@
 
 namespace App\Models\Event;
 
-use App\Exceptions\File\FileAlreadyExistsException;
 use App\Models\File\File;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -37,7 +36,7 @@ class Event extends Model
         return $this->attributes['type'] = json_decode($value);
     }
 
-    public function create(array $eventData, ?array $files): void
+    public function createAndUploadFile(array $eventData, ?array $files): void
     {
         $filesData = [];
         try {
@@ -59,10 +58,44 @@ class Event extends Model
                 $file->fill($fileData)->save();
             }
             DB::commit();
-        } catch (FileAlreadyExistsException $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
             if (isset($eventDirectory)) {
                 Storage::deleteDirectory($eventDirectory);
+            }
+            throw $e;
+        }
+    }
+
+    public function updateAndUploadFile(array $eventData, ?array $files): void
+    {
+        $filesData = [];
+        try {
+            DB::beginTransaction();
+            $this->update($eventData);
+            if ($files) {
+                $eventDirectory = self::ATTACHMENTS_UPLOAD_PATH . $this->id . '/';
+                foreach($files as $file)
+                {
+                    $fileName = time() . rand(1,99) . '.' . $file->extension();
+                    Storage::putFileAs($eventDirectory, $file, $fileName);
+                    $filesData[]['name'] = $fileName;
+                }
+            }
+            foreach ($filesData as $fileData) {
+                $fileData['event_id'] = $this->id;
+                $file = new File();
+                $file->fill($fileData)->save();
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            if (isset($eventDirectory)) {
+                foreach ($filesData as $fileData) {
+                    if (array_key_exists('name', $fileData)) {
+                        Storage::delete($eventDirectory . $fileData['name']);
+                    }
+                }
             }
             throw $e;
         }

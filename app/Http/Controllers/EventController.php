@@ -65,7 +65,7 @@ class EventController extends Controller
         }
 
         try {
-            $event->create($request->post(), $request->file('files'));
+            $event->createAndUploadFile($request->post(), $request->file('files'));
         } catch (FileAlreadyExistsException $exception) {
             return redirect()->route('event.new', [$event->id])->with('danger', 'Chyba při nahrávání souboru.');
         }
@@ -99,7 +99,7 @@ class EventController extends Controller
             unset($rules['name']);
         }
         $request->validate($rules);
-        $event->fill($request->post())->save();
+        $event->updateAndUploadFile($request->post(), $request->file('files'));
 
         return redirect()->route('event.edit', ['event' => $event])->with('success', 'Událost byla editována.');
     }
