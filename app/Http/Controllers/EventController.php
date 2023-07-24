@@ -40,7 +40,7 @@ class EventController extends Controller
             'event_end' => $eventEnd,
         ];
 
-        return view('Event/index', [
+        return view('event/index', [
             'events' => $events,
             'filter' => $filter,
             'eventTypes' => BladeUtils::setSelectedForSelect(Event::EVENT_TYPES, $type),
@@ -49,7 +49,7 @@ class EventController extends Controller
 
     public function new(Request $request)
     {
-        return view('Event/add-event-form', [
+        return view('event/add-event-form', [
             'eventTypes' => BladeUtils::setSelectedForSelect(Event::EVENT_TYPES, $request->old('type')),
         ]);
     }
@@ -77,7 +77,7 @@ class EventController extends Controller
     {
         $interval = DateUtils::subtractStringDateTimes($event->event_start, $event->event_end);
 
-        return view('Event/detail', [
+        return view('event/detail', [
             'interval' => $interval,
             'event' => $event,
         ]);
@@ -85,7 +85,7 @@ class EventController extends Controller
 
     public function edit(Event $event)
     {
-        return view('Event/update-event-form', [
+        return view('event/update-event-form', [
             'event' => $event,
             'eventTypes' => BladeUtils::setSelectedForSelect(Event::EVENT_TYPES, $event->type),
         ]);

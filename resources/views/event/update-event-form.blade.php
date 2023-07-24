@@ -18,13 +18,11 @@
                     <label for="exampleInputEmail1">Konec akce</label>
                     <input type="datetime-local" id="event_end" name="event_end" class="form-control" required="" value="{{date('Y-m-d\TH:i', strtotime($event->event_end))}}">
                 </div>
-                <div class="">
-                    <label><strong>Typ akce :</strong></label><br/>
-                    <select class="form-control" name="type[]" multiple="">
-                        @foreach ($eventTypes as $key => $type)
-                            <option value="{{$key}}" {{ ($type['selected'] ? 'selected':'') }}>{{ $type['value'] }}</option>
-                        @endforeach
-                    </select>
+                <div class="form-group">
+                    <label><strong>Typ akce:</strong></label><br>
+                    @foreach ($eventTypes as $key => $type)
+                        <label><input type="checkbox" name="type[]" value="{{$key}}" {{ ($type['selected'] ? 'checked':'') }}>{{ $type['value'] }}</label>
+                    @endforeach
                 </div>
                 <div class="form-group">
                     <label for="exampleInputEmail1">Poznámka</label>
