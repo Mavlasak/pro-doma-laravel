@@ -29,11 +29,6 @@
                     <textarea name="note" class="form-control">{{$event->note}}</textarea>
                 </div>
                 <div class="mb-3">
-                    @foreach ($event->files as $file)
-                        <a href="{{route('file.download', $file->id)}}">
-                            {{ $file->name }}<br />
-                        </a>
-                    @endforeach
                     <label class="form-label" for="inputFile">Vyberte soubory:</label>
                     <input
                         type="file"
@@ -52,6 +47,16 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Editovat</button>
             </form>
+            @foreach ($event->files as $file)
+                <a href="{{route('file.download', $file)}}">
+                    {{ $file->name }}
+                </a>
+                <form name="" id="" method="post" action="{{route('file.delete', $file)}}">
+                    @method('DELETE')
+                    @csrf
+                    <button type="submit" class="btn btn-danger">Smazat</button>
+                </form>
+            @endforeach
             <br/>
             <a href="{{route('event.index')}}">
                 <button type="submit" class="btn btn-primary">Zpět</button>

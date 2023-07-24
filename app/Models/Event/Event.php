@@ -92,9 +92,7 @@ class Event extends Model
             DB::rollBack();
             if (isset($eventDirectory)) {
                 foreach ($filesData as $fileData) {
-                    if (array_key_exists('name', $fileData)) {
-                        Storage::delete($eventDirectory . $fileData['name']);
-                    }
+                    Storage::delete($eventDirectory . $fileData['name']);
                 }
             }
             throw $e;

@@ -31,4 +31,5 @@ Route::controller(EventController::class)->group(function() {
 
 Route::controller(FileController::class)->group(function() {
     Route::get('soubor/{file}/download','download')->name('file.download');
+    Route::delete('soubor/{file}/smazat','delete')->name('file.delete');
 });
